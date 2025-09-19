@@ -38,16 +38,19 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             environment {
-                SONAR_TOKEN = credentials('SONAR_TOKEN')
+                SONAR_SCANNER_FOLDER = 'sonar-scanner'
             }
             steps {
-                bat '''
-                curl -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-windows.zip
-                powershell -Command "Expand-Archive -Force sonar-scanner.zip sonar-scanner"
-                sonar-scanner\\bin\\sonar-scanner.bat -D"sonar.login=%SONAR_TOKEN%"
-                '''
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    bat """
+                        curl -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-windows.zip
+                        powershell -Command "Expand-Archive -Force sonar-scanner.zip ${SONAR_SCANNER_FOLDER}"
+                        ${SONAR_SCANNER_FOLDER}\\bin\\sonar-scanner.bat -D"sonar.login=${SONAR_TOKEN}"
+                    """
+                }
             }
         }
     }
 }
+
 
