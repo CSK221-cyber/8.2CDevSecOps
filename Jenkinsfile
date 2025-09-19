@@ -34,11 +34,12 @@ pipeline {
   steps {
     sh '''
       wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-      unzip sonar-scanner-cli-4.8.0.2856-linux.zip
-      ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner
+      unzip -o sonar-scanner-cli-4.8.0.2856-linux.zip
+      ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner -Dsonar.login=$SONAR_TOKEN
     '''
   }
- } 
+ }
  }
 }
+
 
