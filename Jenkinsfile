@@ -8,41 +8,41 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://github.com/CSK221-cyber/8.2CDevSecOps.git'
+        bat 'git clone -b main https://github.com/your_github_username/8.2CDevSecOps.git .'
       }
     }
     
     stage('Install Dependencies') {
       steps {
-        sh 'npm install'
+        bat 'npm install'
       }
     }
     
     stage('Run Tests') {
       steps {
-        sh 'npm test || true'
+        // continue even if tests fail
+        bat 'npm test || exit /b 0'
       }
     }
     
     stage('Generate Coverage Report') {
       steps {
-        sh 'npm run coverage || true'
+        bat 'npm run coverage || exit /b 0'
       }
     }
     
     stage('NPM Audit (Security Scan)') {
       steps {
-        sh 'npm audit || true'
+        bat 'npm audit || exit /b 0'
       }
     }
 
     stage('SonarCloud Analysis') {
       steps {
-        // Download SonarScanner CLI
-        sh '''
-          curl -sSLo sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli.zip
-          ./sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner
+        bat '''
+          powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-windows.zip -OutFile sonar-scanner-cli.zip"
+          powershell -Command "Expand-Archive -Path sonar-scanner-cli.zip -DestinationPath ."
+          sonar-scanner-4.8.0.2856-windows\\bin\\sonar-scanner.bat
         '''
       }
     }
